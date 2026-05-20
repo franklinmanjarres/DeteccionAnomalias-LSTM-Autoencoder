@@ -6,6 +6,16 @@
 
 **Tecnología:** LSTM Autoencoder · TensorFlow · Keras | Parámetros: 12,705 | Dataset NAB: 4,032 pts
 
+| Elemento                | Efecto                                                             |
+| ----------------------- | ------------------------------------------------------------------ |
+| **Serie temporal**      | Línea azul que se dibuja progresivamente de izquierda a derecha    |
+| **Reconstrucción LSTM** | Línea verde punteada que aparece primero (el modelo "aprendiendo") |
+| **Zonas de anomalía**   | Fondos rojos semi-transparentes que aparecen con fade              |
+| **Puntos de anomalía**  | Círculos rojos pulsantes con glow                                  |
+| **Labels**              | "Anomalía #1" y "Anomalía #2" con slide-in                         |
+| **Stats**               | Cajas de parámetros con borde glow pulsante                        |
+
+
 ##  Descripción
 Modelo de Deep Learning no supervisado basado en arquitectura 
 LSTM Autoencoder (Encoder-Decoder) para detectar anomalías en 
