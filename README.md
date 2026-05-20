@@ -1,7 +1,10 @@
-#  Detección de anomalías usando LSTM-Autoencoder
+##  Detección de Anomalías con LSTM Autoencoder
 
+<p align="center">
+  <img src="anomalias_lstm_animado.gif" width="700" alt="Detección de anomalías LSTM"/>
+</p>
 
-![Preview](preview_lstm.png)
+**Tecnología:** LSTM Autoencoder · TensorFlow · Keras | Parámetros: 12,705 | Dataset NAB: 4,032 pts
 
 ##  Descripción
 Modelo de Deep Learning no supervisado basado en arquitectura 
