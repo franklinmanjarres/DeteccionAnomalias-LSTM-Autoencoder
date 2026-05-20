@@ -1,4 +1,4 @@
-#  Detección de Anomalías en Series de Tiempo con LSTM Autoencoder
+#  Detección de anomalías usando LSTM-Autoencoder
 
 
 ![Preview](preview_lstm.png)
