@@ -1,7 +1,7 @@
 #  Detección de Anomalías en Series de Tiempo con LSTM Autoencoder
 
 
-![Preview](preview.png)
+![Preview](preview_lstm.png)
 
 ##  Descripción
 Modelo de Deep Learning no supervisado basado en arquitectura 
