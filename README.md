@@ -16,6 +16,16 @@
 
 ---
 
+## Tabla de Contenidos
+
+- [1. Identificación del Problema](#1-identificación-del-problema)
+- [2. Los Datos — Cómo se utilizan para resolver el problema](#2-los-datos--cómo-se-utilizan-para-resolver-el-problema)
+- [3. Conclusiones Finales](#3-conclusiones-finales)
+- [Tecnologías Utilizadas](#tecnologías-utilizadas)
+- [Cómo Ejecutar](#cómo-ejecutar)
+
+---
+
 ## 1. Identificación del Problema
 
 ### ¿Qué problema existe?
@@ -186,4 +196,3 @@ pip install tensorflow numpy pandas matplotlib
 
 Proyecto desarrollado como parte de un curso de **Machine Learning & AI**.  
 Si tienes preguntas o sugerencias, puedes abrir un *issue* en este repositorio.
-
