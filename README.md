@@ -1,6 +1,3 @@
-##  Detección de Anomalías con LSTM Autoencoder
-
-
 <p align="center">
   <img src="anomalias_lstm_animado.gif" width="700" alt="Detección de anomalías LSTM"/>
 </p>
