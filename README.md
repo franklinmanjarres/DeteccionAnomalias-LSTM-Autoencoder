@@ -5,95 +5,98 @@
   <img src="anomalias_lstm_animado.gif" width="700" alt="Detección de anomalías LSTM"/>
 </p>
 
+# Detección de Anomalías con LSTM-Autoencoder
 
-
-> Modelo de deep learning no supervisado capaz de detectar comportamientos anómalos en series temporales, sin necesidad de datos etiquetados durante el entrenamiento.
-
----
-
-##  Descripción del Problema
-
-En contextos reales —monitoreo industrial, sistemas financieros, infraestructura de servidores— detectar **cuándo algo se sale de lo normal** es crítico. El problema: casi nunca tenemos ejemplos etiquetados de las anomalías que queremos detectar.
-
-Este proyecto propone una solución basada en **aprendizaje no supervisado**: entrenar un modelo para que aprenda el comportamiento *normal* de una serie temporal, y después detectar anomalías como aquellos puntos donde el modelo **falla en reconstruir** los datos.
+![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=flat&logo=python&logoColor=white)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-FF6F00?style=flat&logo=tensorflow&logoColor=white)
+![Keras](https://img.shields.io/badge/Keras-Deep%20Learning-D00000?style=flat&logo=keras&logoColor=white)
+![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-F37626?style=flat&logo=jupyter&logoColor=white)
+![Status](https://img.shields.io/badge/Estado-Completado-22c55e?style=flat)
+![Type](https://img.shields.io/badge/Tipo-No%20Supervisado-8b5cf6?style=flat)
 
 ---
 
-##  Intuición del Enfoque
+## 1. Identificación del Problema
 
-```
-Serie normal → [LSTM Encoder] → Vector latente comprimido (dim=32)
-                                        ↓
-Serie reconstruida ← [LSTM Decoder] ←──┘
+### ¿Qué problema existe?
 
-Error de reconstrucción bajo  → Comportamiento NORMAL
-Error de reconstrucción alto  → ANOMALÍA detectada
-```
+En industrias como banca, manufactura, salud o tecnología, es crítico saber cuándo algo se está comportando de manera anormal. Por ejemplo:
 
-El modelo actúa como un **embudo de memoria**: al obligar a los datos a pasar por una representación muy pequeña, solo retiene los patrones principales. Lo que no encaja en esos patrones genera un error de reconstrucción alto → eso es la señal de anomalía.
+- Un banco necesita detectar transacciones fraudulentas antes de que el daño ocurra
+- Una fábrica necesita saber cuándo una máquina está a punto de fallar
+- Un equipo de tecnología necesita anticipar caídas de servidores
+
+El problema es siempre el mismo: **¿cómo detectar lo anormal si no tenemos ejemplos de lo que es anormal?**
+
+En la práctica, los casos de fraude, falla o caída son tan raros que no hay suficientes ejemplos para entrenar un modelo tradicional. Necesitamos una solución diferente.
+
+### ¿Qué propone este proyecto?
+
+En lugar de aprender qué es una anomalía, el modelo aprende qué es el comportamiento **normal**. Cuando aparece algo que se desvía demasiado de ese comportamiento normal, el modelo lo marca como anomalía.
+
+> **Ejemplo:** Un detector de incendios no sabe cómo es un incendio — solo sabe cómo huele el aire normal. Cuando el olor cambia más allá de cierto límite, dispara la alarma. Este modelo funciona exactamente igual: aprende el patrón normal de los datos y detecta cuando algo se desvía demasiado.
+
+### ¿Por qué es difícil este problema?
+
+Los datos que se analizan son **series temporales** — es decir, mediciones tomadas a lo largo del tiempo (como el precio de una acción hora a hora, o la temperatura de una máquina cada 5 minutos). Este tipo de datos tiene una característica especial: **el valor actual depende de los valores anteriores**. Un modelo que no tenga memoria del pasado no puede entenderlos correctamente.
+
+Por eso se usa una arquitectura LSTM (Long Short-Term Memory), una red neuronal diseñada específicamente para aprender patrones en secuencias de datos a lo largo del tiempo.
 
 ---
 
-##  ¿Cómo funciona el modelo? (explicado paso a paso)
+## 2. Los Datos — Cómo se utilizan para resolver el problema
 
-El modelo tiene una lógica muy intuitiva: **aprende qué es "normal" y detecta lo que no lo es.**
+### ¿Qué datos se usan?
 
-Imagina que le muestras a alguien miles de días de datos normales. Esa persona aprende a reconocer el patrón típico. Cuando le muestras un día raro, nota que algo no encaja. Eso es exactamente lo que hace este modelo.
+Se utiliza el **Numenta Anomaly Benchmark (NAB)**, un conjunto de datos público diseñado para evaluar modelos de detección de anomalías en series temporales.
 
----
+| Archivo | Contenido | Para qué se usa |
+|---|---|---|
+| `art_daily_small_noise.csv` | Serie temporal sin anomalías — comportamiento completamente normal | Entrenar el modelo |
+| `art_daily_jumpsup.csv` | Serie temporal con saltos abruptos — anomalías reales presentes | Evaluar si el modelo las detecta |
 
-### Paso 1 — Comprimir la información (Encoder)
+Los datos se descargan automáticamente al ejecutar el notebook. No se requiere configuración manual.
 
-La primera parte del modelo lee una ventana de **288 puntos de tiempo** (un día completo de datos) y los resume en un único vector pequeño de **32 números**.
+### ¿Cómo se preparan los datos?
+
+Antes de entrenar el modelo, los datos pasan por tres transformaciones:
+
+**Normalización** — Los valores se escalan para que tengan media 0 y desviación estándar 1. Esto evita que el modelo se confunda por la escala de los números y aprende patrones más estables.
+
+**Creación de ventanas temporales** — En lugar de analizar un punto a la vez, el modelo analiza bloques de 288 puntos consecutivos (equivalente a un día completo de datos). Esto le permite ver el contexto completo de cada momento.
+
+**División entrenamiento / evaluación** — El modelo solo aprende con los datos normales. Los datos con anomalías se reservan exclusivamente para la prueba final, para verificar si el modelo las detecta sin haberlas visto antes.
+
+### ¿Cómo usa el modelo esos datos para detectar anomalías?
+
+El modelo sigue 6 pasos:
+
+**Paso 1 — Comprimir:** Lee 288 puntos de tiempo y los resume en 32 números.
 
 $$z = \text{LSTM}_{\text{encoder}}(X) \quad \rightarrow \quad z \in \mathbb{R}^{32}$$
 
-> **Analogía:** Es como pedirle a alguien que describa una película completa en una sola oración. Si la película es predecible y conocida, lo hará bien. Si es completamente rara y caótica, la descripción va a ser mala — y ese error es nuestra señal.
+> Es como comprimir un archivo de 1GB a 32MB. Si el archivo es normal y predecible, la compresión es buena. Si tiene contenido extraño e inesperado, la compresión falla — y esa falla es la señal.
 
----
-
-### Paso 2 — Preparar la reconstrucción (RepeatVector)
-
-El resumen de 32 números no tiene dimensión temporal, pero el decodificador necesita trabajar punto por punto. Entonces simplemente **repetimos ese resumen 288 veces**, una por cada punto de tiempo que queremos reconstruir.
+**Paso 2 — Preparar la reconstrucción:** El resumen de 32 números se repite 288 veces para que el modelo pueda trabajar punto por punto.
 
 $$Z_{\text{seq}} = [\,z,\; z,\; \dots,\; z\,]_{\;288 \text{ veces}}$$
 
-> **Analogía:** Es como tomar esa única oración que resume la película y dársela al modelo 288 veces para que intente reconstruir escena por escena a partir de ese resumen.
-
----
-
-### Paso 3 — Reconstruir la serie original (Decoder)
-
-La segunda parte del modelo toma ese resumen repetido e intenta **regenerar la serie original**, punto por punto.
+**Paso 3 — Reconstruir:** El modelo intenta regenerar la serie original a partir del resumen.
 
 $$\hat{H} = \text{LSTM}_{\text{decoder}}(Z_{\text{seq}})$$
 
----
-
-### Paso 4 — Traducir a valores reales
-
-Los estados internos de la red se convierten en valores numéricos concretos mediante una transformación lineal aplicada a cada instante de tiempo:
+**Paso 4 — Traducir a valores reales:** Los estados internos se convierten en números concretos mediante una transformación lineal.
 
 $$\hat{x}_t = W \cdot \hat{h}_t + b$$
 
-> Donde $W$ y $b$ son los pesos que el modelo aprende durante el entrenamiento.
-
----
-
-### Paso 5 — Medir el error de reconstrucción
-
-Comparamos lo que el modelo reconstruyó contra lo que realmente ocurrió. Usamos el **Error Absoluto Medio (MAE)**, que mide en promedio cuánto se equivocó el modelo en cada punto:
+**Paso 5 — Medir el error:** Se compara lo reconstruido contra lo real usando el Error Absoluto Medio (MAE).
 
 $$\text{MAE} = \frac{1}{288} \sum_{t=1}^{288} \left| x_t - \hat{x}_t \right|$$
 
-- Si el error es **bajo** → el modelo reconoció el patrón → **dato normal**  
-- Si el error es **alto** → el modelo no pudo reconstruirlo → **anomalía detectada** 
+- Error bajo → el modelo reconoció el patrón → dato normal
+- Error alto → el modelo no pudo reconstruirlo → anomalía detectada
 
----
-
-### Paso 6 — Definir el umbral de detección
-
-Durante el entrenamiento (solo con datos normales), calculamos el **peor error que el modelo cometió**. Ese valor se convierte en el umbral:
+**Paso 6 — Definir el límite de detección:** El peor error cometido durante el entrenamiento con datos normales se convierte en el umbral. Todo lo que lo supere es una anomalía.
 
 ```
 Umbral = max(MAE durante entrenamiento)
@@ -101,39 +104,9 @@ Umbral = max(MAE durante entrenamiento)
 Si MAE en datos nuevos > Umbral → ANOMALÍA
 ```
 
-> **¿Por qué funciona?** El modelo nunca vio anomalías mientras aprendía, entonces no sabe cómo reconstruirlas. Ese "no saber" se convierte en un error alto — y ahí está la detección.
+### Flujo completo del proyecto (pipeline)
 
----
-
-### Arquitectura resumida
-
-| Capa | Función |
-|---|---|
-| **LSTM Encoder** | Lee 288 pasos y los comprime en 32 números |
-| **Dropout 20%** | Evita que el modelo memorice en lugar de aprender |
-| **RepeatVector** | Prepara el resumen para la reconstrucción |
-| **LSTM Decoder** | Reconstruye la serie punto por punto |
-| **Dropout 20%** | Segunda capa de regularización |
-| **Dense (salida)** | Convierte los estados internos a valores reales |
-
-**Optimizador:** Adam · **Pérdida:** MSE · **Early Stopping:** patience=5
-
----
-
-##  Dataset
-
-**Numenta Anomaly Benchmark (NAB)** — dataset público y reproducible, sin necesidad de descarga manual.
-
-| Archivo | Descripción |
-|---|---|
-| `art_daily_small_noise.csv` | Serie temporal **sin anomalías** → usada para entrenamiento |
-| `art_daily_jumpsup.csv` | Serie temporal **con anomalías** (saltos abruptos) → usada para evaluación |
-
-Los datos se descargan automáticamente desde el repositorio oficial de NAB al ejecutar el notebook.
-
----
-
-## 🔁 Pipeline del Proyecto
+> **Pipeline** es el conjunto de pasos ordenados que siguen los datos desde que entran al sistema hasta que se obtiene el resultado. Como una línea de producción: cada etapa transforma los datos y los pasa a la siguiente.
 
 ```
 1. Carga de datos (NAB)
@@ -153,48 +126,64 @@ Los datos se descargan automáticamente desde el repositorio oficial de NAB al e
 8. Visualización de anomalías sobre la serie original
 ```
 
+### Arquitectura del modelo
+
+| Capa | Función |
+|---|---|
+| LSTM Encoder | Lee 288 pasos y los comprime en 32 números |
+| Dropout 20% | Evita que el modelo memorice en lugar de aprender |
+| RepeatVector | Prepara el resumen para la reconstrucción |
+| LSTM Decoder | Reconstruye la serie punto por punto |
+| Dropout 20% | Segunda capa de regularización |
+| Dense (salida) | Convierte los estados internos a valores reales |
+
+**Optimizador:** Adam · **Pérdida:** MSE · **Early Stopping:** patience=5
+
 ---
 
-##  Resultados
+## 3. Conclusiones Finales
 
-- El modelo aprende a reconstruir la serie normal con error bajo y estable.
-- Al evaluar sobre la serie con saltos abruptos, el error de reconstrucción **supera el umbral** exactamente en las zonas donde ocurren las anomalías.
-- Las anomalías detectadas se visualizan marcadas en rojo sobre la serie temporal completa.
+### ¿Funcionó?
+
+Sí. El modelo detectó correctamente el momento exacto en que la serie temporal presentó un salto anómalo, sin haber visto ningún ejemplo de anomalía durante el entrenamiento. Las anomalías aparecen marcadas en rojo sobre la gráfica de la serie completa, concentradas exactamente en la zona del salto abrupto.
+
+### ¿Qué aprendimos?
+
+El enfoque no supervisado — aprender lo normal para detectar lo anormal — es viable y efectivo cuando no se tienen datos etiquetados. Este es el caso más común en problemas reales de industria.
+
+La arquitectura LSTM es especialmente adecuada para este tipo de datos porque tiene memoria: recuerda lo que ocurrió en pasos anteriores para entender el contexto del momento actual. Una red neuronal sin memoria trataría cada punto de tiempo de forma aislada y perdería los patrones de la serie.
+
+### ¿Qué limitaciones tiene?
+
+- El umbral de detección se fija durante el entrenamiento. Si el comportamiento normal cambia con el tiempo, el modelo necesita reentrenarse.
+- El modelo no identifica el tipo de anomalía, solo señala que algo está fuera de lo normal.
+- Requiere un volumen suficiente de datos normales para aprender el patrón correctamente.
+
+### ¿Qué sigue?
+
+Este proyecto es una base sólida. Los siguientes pasos naturales serían aplicarlo a datos reales de una industria específica, ajustar el umbral de forma dinámica y combinar la detección con un sistema de alertas automáticas.
 
 ---
 
-##  Tecnologías Utilizadas
+## Tecnologías Utilizadas
 
 - **Python 3.x**
 - **TensorFlow / Keras** — construcción y entrenamiento del modelo
 - **NumPy / Pandas** — manipulación de datos
 - **Matplotlib** — visualización
 
----
-
-##  Cómo Ejecutar
+## Cómo Ejecutar
 
 1. Abre el notebook en Google Colab o Jupyter.
 2. Ejecuta todas las celdas en orden — los datos se descargan automáticamente.
 3. No se requiere ninguna configuración adicional.
 
 ```bash
-# Alternativamente, instala las dependencias localmente:
 pip install tensorflow numpy pandas matplotlib
 ```
 
----
+## Autor
 
-##  Comparación: LSTM vs CNN para Detección de Anomalías
-
-| Característica | CNN-Autoencoder | LSTM-Autoencoder |
-|---|---|---|
-| Tipo de memoria | Local (ventana fija) | Secuencial (memoria del pasado) |
-| Velocidad de entrenamiento | ✅ Más rápido | ⚠️ Más lento |
-| Captura de dependencias largas | ❌ Limitada | ✅ Fuerte |
-| Interpretabilidad | Media | Media |
-| Idóneo para | Patrones locales | Series con contexto temporal largo |
-
-**Conclusión:** Aunque el LSTM requiere más cómputo, su capacidad de "recordar" patrones pasados lo hace más robusto para series temporales con dependencias largas, donde la CNN básica tiene puntos ciegos.
-
+Proyecto desarrollado como parte de un curso de **Machine Learning & AI**.  
+Si tienes preguntas o sugerencias, puedes abrir un *issue* en este repositorio.
 
