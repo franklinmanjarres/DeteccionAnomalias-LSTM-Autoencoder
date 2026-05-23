@@ -1,5 +1,8 @@
 ##  Detección de Anomalías con LSTM Autoencoder
 
+![Python](https://img.shields.io/badge/Python-3.x-blue)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange)
+
 <p align="center">
   <img src="anomalias_lstm_animado.gif" width="700" alt="Detección de anomalías LSTM"/>
 </p>
