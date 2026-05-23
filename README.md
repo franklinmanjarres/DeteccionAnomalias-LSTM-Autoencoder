@@ -10,7 +10,7 @@
 
 ---
 
-## 📌 Descripción del Problema
+##  Descripción del Problema
 
 En contextos reales —monitoreo industrial, sistemas financieros, infraestructura de servidores— detectar **cuándo algo se sale de lo normal** es crítico. El problema: casi nunca tenemos ejemplos etiquetados de las anomalías que queremos detectar.
 
@@ -18,7 +18,7 @@ Este proyecto propone una solución basada en **aprendizaje no supervisado**: en
 
 ---
 
-## 💡 Intuición del Enfoque
+##  Intuición del Enfoque
 
 ```
 Serie normal → [LSTM Encoder] → Vector latente comprimido (dim=32)
@@ -33,7 +33,7 @@ El modelo actúa como un **embudo de memoria**: al obligar a los datos a pasar p
 
 ---
 
-## 🧠 ¿Cómo funciona el modelo? (explicado paso a paso)
+##  ¿Cómo funciona el modelo? (explicado paso a paso)
 
 El modelo tiene una lógica muy intuitiva: **aprende qué es "normal" y detecta lo que no lo es.**
 
@@ -85,8 +85,8 @@ Comparamos lo que el modelo reconstruyó contra lo que realmente ocurrió. Usamo
 
 $$\text{MAE} = \frac{1}{288} \sum_{t=1}^{288} \left| x_t - \hat{x}_t \right|$$
 
-- Si el error es **bajo** → el modelo reconoció el patrón → **dato normal** ✅  
-- Si el error es **alto** → el modelo no pudo reconstruirlo → **anomalía detectada** 🚨
+- Si el error es **bajo** → el modelo reconoció el patrón → **dato normal**  
+- Si el error es **alto** → el modelo no pudo reconstruirlo → **anomalía detectada** 
 
 ---
 
@@ -119,7 +119,7 @@ Si MAE en datos nuevos > Umbral → ANOMALÍA
 
 ---
 
-## 📊 Dataset
+##  Dataset
 
 **Numenta Anomaly Benchmark (NAB)** — dataset público y reproducible, sin necesidad de descarga manual.
 
@@ -154,7 +154,7 @@ Los datos se descargan automáticamente desde el repositorio oficial de NAB al e
 
 ---
 
-## 📈 Resultados
+##  Resultados
 
 - El modelo aprende a reconstruir la serie normal con error bajo y estable.
 - Al evaluar sobre la serie con saltos abruptos, el error de reconstrucción **supera el umbral** exactamente en las zonas donde ocurren las anomalías.
@@ -162,7 +162,7 @@ Los datos se descargan automáticamente desde el repositorio oficial de NAB al e
 
 ---
 
-## ⚙️ Tecnologías Utilizadas
+##  Tecnologías Utilizadas
 
 - **Python 3.x**
 - **TensorFlow / Keras** — construcción y entrenamiento del modelo
@@ -171,7 +171,7 @@ Los datos se descargan automáticamente desde el repositorio oficial de NAB al e
 
 ---
 
-## 🚀 Cómo Ejecutar
+##  Cómo Ejecutar
 
 1. Abre el notebook en Google Colab o Jupyter.
 2. Ejecuta todas las celdas en orden — los datos se descargan automáticamente.
@@ -184,7 +184,7 @@ pip install tensorflow numpy pandas matplotlib
 
 ---
 
-## 📚 Comparación: LSTM vs CNN para Detección de Anomalías
+##  Comparación: LSTM vs CNN para Detección de Anomalías
 
 | Característica | CNN-Autoencoder | LSTM-Autoencoder |
 |---|---|---|
@@ -196,9 +196,4 @@ pip install tensorflow numpy pandas matplotlib
 
 **Conclusión:** Aunque el LSTM requiere más cómputo, su capacidad de "recordar" patrones pasados lo hace más robusto para series temporales con dependencias largas, donde la CNN básica tiene puntos ciegos.
 
----
 
-## 👤 Autor
-
-Proyecto desarrollado como parte de un curso de **Machine Learning & AI**.  
-Si tienes preguntas o sugerencias, puedes abrir un *issue* en este repositorio.
