@@ -2,8 +2,6 @@
 
 # Detección de Anomalías con LSTM-Autoencoder
 
-![Banner](assets/anomalia_lstm_explicada.png)
-
 > Modelo no supervisado que aprende el comportamiento normal de una serie temporal y detecta automáticamente cuando algo se sale de ese patrón — sin necesidad de datos etiquetados.
 
 ---
