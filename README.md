@@ -2,7 +2,7 @@
 
 # Detección de Anomalías con LSTM-Autoencoder
 
-> Modelo no supervisado que aprende el comportamiento normal de una serie temporal y detecta automáticamente cuando algo se sale de ese patrón — sin necesidad de datos etiquetados.
+> > Implementación de una arquitectura de deep learning basada en LSTM-Autoencoder para detectar anomalías en series temporales mediante aprendizaje no supervisado, sin necesidad de datos etiquetados.
 
 ---
 
@@ -93,11 +93,11 @@ Los datos son **series temporales** — mediciones a lo largo del tiempo donde e
 
 $$z = \text{LSTM}_{\text{encoder}}(X) \quad \rightarrow \quad z \in \mathbb{R}^{32}$$
 
-> Como comprimir un archivo de 1GB a 32MB. Si el contenido es normal, la compresión es buena. Si es extraño, falla — y esa falla es la señal.
-
 **Paso 2 — Preparar:** El resumen se repite 288 veces para reconstruir punto por punto.
 
 $$Z_{\text{seq}} = [\,z,\; z,\; \dots,\; z\,]_{\;288 \text{ veces}}$$
+
+>El encoder transforma secuencias temporales en una representación latente compacta de 32 dimensiones, preservando los patrones normales del sistema.
 
 **Paso 3 — Reconstruir:** El modelo regenera la serie original a partir del resumen.
 
@@ -156,7 +156,7 @@ Si MAE en datos nuevos > Umbral → ANOMALÍA
 
 ### ¿Funcionó?
 
-Sí. El modelo detectó correctamente el momento exacto del salto anómalo sin haber visto ningún ejemplo de anomalía durante el entrenamiento.
+El modelo logró identificar correctamente los saltos abruptos presentes en la serie temporal de prueba utilizando únicamente datos normales durante el entrenamiento.
 
 ### ¿Qué aprendimos?
 
@@ -173,6 +173,16 @@ El enfoque no supervisado es viable y efectivo cuando no se tienen datos etiquet
 Aplicarlo a datos reales de una industria específica, ajustar el umbral dinámicamente y conectarlo a un sistema de alertas automáticas.
 
 ---
+## Habilidades Demostradas
+
+- Deep Learning
+- Detección de anomalías
+- Series temporales
+- Modelado no supervisado
+- Ingeniería de datos
+- TensorFlow / Keras
+- Análisis exploratorio de datos (EDA)
+- Evaluación de modelos
 
 ## Autor
 
