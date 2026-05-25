@@ -1,6 +1,6 @@
-![Portada](assets/portada_linkedin_lstm.png)
-
 # Detección de Anomalías con LSTM-Autoencoder
+
+![Portada](assets/portada_linkedin_lstm.png)
 
 > > Implementación de una arquitectura de deep learning basada en LSTM-Autoencoder para detectar anomalías en series temporales mediante aprendizaje no supervisado, sin necesidad de datos etiquetados.
 
