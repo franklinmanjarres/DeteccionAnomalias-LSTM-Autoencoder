@@ -187,4 +187,4 @@ Aplicarlo a datos reales de una industria específica, ajustar el umbral dinámi
 ## Autor
 
 Proyecto desarrollado como parte de un curso de **Machine Learning & AI**.
-Si tienes preguntas o sugerencias, puedes abrir un *issue* en este repositorio.
+
