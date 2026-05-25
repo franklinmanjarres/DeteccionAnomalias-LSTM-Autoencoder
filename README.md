@@ -19,11 +19,6 @@
 
 ## Tecnologías
 
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=flat&logo=python&logoColor=white)
-![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-FF6F00?style=flat&logo=tensorflow&logoColor=white)
-![Keras](https://img.shields.io/badge/Keras-Deep%20Learning-D00000?style=flat&logo=keras&logoColor=white)
-![Status](https://img.shields.io/badge/Estado-Completado-22c55e?style=flat)
-
 | Herramienta | Uso |
 |---|---|
 | TensorFlow / Keras | Construcción y entrenamiento del modelo |
