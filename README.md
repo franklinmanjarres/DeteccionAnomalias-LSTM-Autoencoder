@@ -1,4 +1,4 @@
-![Demo animada](assets/anomaly_lstm_pulse.gif)
+![Portada](assets/portada_linkedin_lstm.png)
 
 # Detección de Anomalías con LSTM-Autoencoder
 
